@@ -21,9 +21,20 @@ export class ContatoController {
     }
     return reply.send(contato);
   }
+  async getContatoByEmail(request,reply){
+    const { email } = request.params;
+    const contato = this.contatoService.encontrarEmail(email);
+    if(!contato){
+      return reply.code(404).send({message: 'email nao encontrado'})
+    }
+    return reply.send(contato)}
 
   async createContato(request, reply) {
     const novoContato = this.contatoService.createContato(request.body);
+    return reply.code(201).send(novoContato);
+    if (!novoContato) {
+      return reply.code(400).send({ message: 'erro ao criar contato' });
+    }   
     return reply.code(201).send(novoContato);
   }
 
@@ -46,4 +57,14 @@ export class ContatoController {
     }
     return reply.code(204).send();
   }
+  async encontrarEmail(request,reply){
+    const  { email } = request.params;
+    const {contato} = this.contatoService.encontrarEmail(email);
+
+    if(!email){
+      return reply.code(404).send({message:'email nao encontrado'})
+    }
+    return reply.send({message: 'não foi encontrado o email do:'})+ contato.nome;
+  }
+
 }
